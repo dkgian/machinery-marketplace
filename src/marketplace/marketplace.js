@@ -45,7 +45,8 @@ function chooseBidSessionWinner(bidList) {
 function payForTask(task) {
   setTimeout(() => {
     console.log(`Sent ${task.bidPrice} € to MachineId ${task.machineId}`)
-  }, 60000)
+    console.log('***** FINISH SESSION *****')
+  }, 6000)
   const paymentData = {
     amount: task.bidPrice,
   }
@@ -62,7 +63,6 @@ io.on('connection', (socket) => {
   // remove machine from list
   socket.on('disconnect', () => {
     removeClientFromList(socket.id)
-    showClientsList()
   })
 
   // get msg from machine
@@ -72,8 +72,6 @@ io.on('connection', (socket) => {
 
   socket.on('bid_price', (bidData) => {
     const bidDataObject = JSON.parse(bidData)
-
-    // console.log(`MachineId ${_.truncate(socket.id, { length: 8 })} places ${bidDataObject.bidPrice} € for TaskID ${bidDataObject.taskId}`)
 
     bidDataObject.machineId = socket.id
     updateBidPriceList(bidDataObject)
@@ -86,12 +84,12 @@ io.on('connection', (socket) => {
 
 
     io.emit('bid_session_result', JSON.stringify(winner))
-
   })
 
   socket.on('finished_workpiece', (task) => {
     const taskObj = JSON.parse(task)
     console.log('Task done: ', taskObj)
+    _.remove(bidObjects)
     console.log('------------------------')
 
     payForTask(taskObj)

@@ -19,7 +19,7 @@ function processingTask() {
   return setTimeout(() => {
     console.log('task done!')
     console.log('=======================')
-  }, 30000)
+  }, 3000)
 }
 
 function returnWorkpieceAndGetPaid(taskObj) {
@@ -41,7 +41,7 @@ io.on('connect', () => {
 
     setTimeout(() => {
       io.emit('bid_price', JSON.stringify(bidData))
-    }, 20000)
+    }, 4000)
 
     taskObj.bidPrice = bidPrice
     console.log(taskObj)
@@ -59,6 +59,7 @@ io.on('connect', () => {
         processingTask()
         returnWorkpieceAndGetPaid(winnerObj)
       } else {
+        console.log('MACHINE ACCOUNT BALANCE: ', parseFloat(accountBalance))
         console.log('Bidding session closed!')
         console.log('=======================')
       }
@@ -67,7 +68,7 @@ io.on('connect', () => {
 
   io.on('payment', (message) => {
     const paymentObj = JSON.parse(message)
-    accountBalance += paymentObj.amount
+    accountBalance = (parseFloat(accountBalance) + parseFloat(paymentObj.amount)).toFixed(5)
     console.log('MACHINE ACCOUNT BALANCE: ', parseFloat(accountBalance))
   })
 })

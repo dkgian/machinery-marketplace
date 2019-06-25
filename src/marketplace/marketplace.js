@@ -1,9 +1,12 @@
+const http = require('http')
+const app = require('express')()
 const socketIO = require('socket.io')
 const _ = require('lodash')
 
-// const constant = require('../constant')
+const server = http.createServer(app)
+server.listen(8000)
+const io = socketIO(server)
 
-const io = socketIO.listen(8000)
 const clientsList = []
 const bidObjects = []
 
@@ -53,12 +56,17 @@ function payForTask(task) {
   io.to(task.machineId).emit('payment', JSON.stringify(paymentData))
 }
 
+function getClientListAndEmit(socket) {
+  socket.emit('client_list', clientsList)
+}
+
 // event fired every time a new machine connects:
 io.on('connection', (socket) => {
   // =============================================================
   // add machine to list
   addClientToList(socket.id)
   showClientsList()
+  setInterval(() => getClientListAndEmit(socket), 1000)
 
   // remove machine from list
   socket.on('disconnect', () => {

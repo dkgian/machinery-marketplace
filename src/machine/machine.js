@@ -8,7 +8,7 @@ const machineProfile = {
   type: 'machine',
   accountBalance: 0,
   canDo: ['task 1', 'task 2'],
-  // status: MachineInfo.MachineInfo.STATUS_AVAILABLE, // available, unavailable, busy
+  status: MachineInfo.MachineInfo.STATUS_AVAILABLE, // available, unavailable, busy
 }
 
 function updateProfileOnServer() {

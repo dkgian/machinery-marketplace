@@ -1,8 +1,19 @@
 const socketIoClient = require('socket.io-client')
+const MachineInfo = require('../constant/MachineInfo')
 
 const io = socketIoClient.connect('http://localhost:8000')
 
-let accountBalance = 0
+const machineProfile = {
+  id: '123',
+  type: 'machine',
+  accountBalance: 0,
+  canDo: ['task 1', 'task 2'],
+  // status: MachineInfo.MachineInfo.STATUS_AVAILABLE, // available, unavailable, busy
+}
+
+function updateProfileOnServer() {
+  io.emit('machine_profile_update', JSON.stringify(machineProfile))
+}
 
 function calculatePrice(taskObj) {
   if (taskObj.name === 'grinding') {
@@ -27,8 +38,9 @@ function returnWorkpieceAndGetPaid(taskObj) {
 }
 
 io.on('connect', () => {
-  console.log('MACHINE ID: ', io.id)
-  console.log('MACHINE ACCOUNT BALANCE: ', accountBalance)
+  machineProfile.id = io.id
+  updateProfileOnServer()
+  console.log('MACHINE PROFILE: \n', machineProfile)
   console.log('====================================')
 
   io.on('bid', (task) => {
@@ -59,7 +71,7 @@ io.on('connect', () => {
         processingTask()
         returnWorkpieceAndGetPaid(winnerObj)
       } else {
-        console.log('MACHINE ACCOUNT BALANCE: ', parseFloat(accountBalance))
+        console.log('MACHINE ACCOUNT BALANCE: ', parseFloat(machineProfile.accountBalance))
         console.log('Bidding session closed!')
         console.log('=======================')
       }
@@ -68,7 +80,9 @@ io.on('connect', () => {
 
   io.on('payment', (message) => {
     const paymentObj = JSON.parse(message)
-    accountBalance = (parseFloat(accountBalance) + parseFloat(paymentObj.amount)).toFixed(5)
-    console.log('MACHINE ACCOUNT BALANCE: ', parseFloat(accountBalance))
+    machineProfile.accountBalance = (parseFloat(machineProfile.accountBalance)
+      + parseFloat(paymentObj.amount)).toFixed(5)
+    console.log('MACHINE ACCOUNT BALANCE: ', parseFloat(machineProfile.accountBalance))
+    updateProfileOnServer()
   })
 })

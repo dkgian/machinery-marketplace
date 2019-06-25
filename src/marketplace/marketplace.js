@@ -7,8 +7,19 @@ const server = http.createServer(app)
 server.listen(8000)
 const io = socketIO(server)
 
+const fullInfoClients = []
 const clientsList = []
 const bidObjects = []
+
+function updateClientListInfo(profile) {
+  const existsIndex = _.findIndex(fullInfoClients, { id: profile.id })
+  if (existsIndex === -1) {
+    fullInfoClients.push(profile)
+    return null
+  }
+  _.assign(fullInfoClients[existsIndex], profile)
+  return null
+}
 
 function removeClientFromList(id) {
   const disconnectedClientIndex = clientsList.indexOf(id)
@@ -117,4 +128,10 @@ io.on('connection', (socket) => {
     })
   })
   // =============================================================
+  // Update machines's profile
+  socket.on('machine_profile_update', (profile) => {
+    const machineProfile = JSON.parse(profile)
+    updateClientListInfo(machineProfile)
+    // fullInfoClients.push(machineProfile)
+  })
 })

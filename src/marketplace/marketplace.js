@@ -11,7 +11,14 @@ const fullInfoClients = []
 const clientsList = []
 const bidObjects = []
 
-function updateClientListInfo(profile) {
+function updateClientListInfo(profile, removeMachine = false) {
+  if (removeMachine) {
+    _.remove(fullInfoClients, machine => machine.id === profile.id)
+    return null
+  }
+  if (profile.type !== 'machine') {
+    return null
+  }
   const existsIndex = _.findIndex(fullInfoClients, { id: profile.id })
   if (existsIndex === -1) {
     fullInfoClients.push(profile)
@@ -43,7 +50,7 @@ function showClientsList() {
 
 function updateBidPriceList(bidObject) {
   bidObjects.push(bidObject)
-  if (bidObjects.length === clientsList.length - 1) {
+  if (bidObjects.length === fullInfoClients.length) {
     console.log('Bidding list: ', bidObjects)
     console.log('--------------------------')
   }
@@ -68,7 +75,7 @@ function payForTask(task) {
 }
 
 function getClientListAndEmit(socket) {
-  socket.emit('client_list', clientsList)
+  socket.emit('client_list', fullInfoClients)
 }
 
 // event fired every time a new machine connects:
@@ -81,6 +88,7 @@ io.on('connection', (socket) => {
 
   // remove machine from list
   socket.on('disconnect', () => {
+    updateClientListInfo(socket, true)
     removeClientFromList(socket.id)
   })
 

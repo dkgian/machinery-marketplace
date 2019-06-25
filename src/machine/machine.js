@@ -4,7 +4,7 @@ const MachineInfo = require('../constant/MachineInfo')
 const io = socketIoClient.connect('http://localhost:8000')
 
 const machineProfile = {
-  id: '123',
+  id: undefined,
   type: 'machine',
   accountBalance: 0,
   canDo: ['task 1', 'task 2'],

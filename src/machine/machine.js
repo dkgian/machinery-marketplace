@@ -49,16 +49,13 @@ io.on('connect', () => {
     const taskObj = JSON.parse(task)
     const bidPrice = calculatePrice(taskObj)
     const bidData = {
-      taskId: taskObj.taskId,
+      ...taskObj,
       bidPrice,
     }
 
     setTimeout(() => {
       io.emit('bid_price', JSON.stringify(bidData))
     }, 4000)
-
-    taskObj.bidPrice = bidPrice
-    console.log(taskObj)
   })
 
   io.on('bid_session_result', async (winner) => {

@@ -7,24 +7,25 @@ const server = http.createServer(app)
 server.listen(8000)
 const io = socketIO(server)
 
-const fullInfoClients = []
+const machines = []
 const clientsList = []
 const bidObjects = []
+const transactions = []
 
 function updateClientListInfo(profile, removeMachine = false) {
   if (removeMachine) {
-    _.remove(fullInfoClients, machine => machine.id === profile.id)
+    _.remove(machines, machine => machine.id === profile.id)
     return null
   }
   if (profile.type !== 'machine') {
     return null
   }
-  const existsIndex = _.findIndex(fullInfoClients, { id: profile.id })
+  const existsIndex = _.findIndex(machines, { id: profile.id })
   if (existsIndex === -1) {
-    fullInfoClients.push(profile)
+    machines.push(profile)
     return null
   }
-  _.assign(fullInfoClients[existsIndex], profile)
+  _.assign(machines[existsIndex], profile)
   return null
 }
 
@@ -50,14 +51,14 @@ function showClientsList() {
 
 function updateBidPriceList(bidObject) {
   bidObjects.push(bidObject)
-  if (bidObjects.length === fullInfoClients.length - 1) {
+  if (bidObjects.length === machines.length - 2) {
     console.log('Bidding list: ', bidObjects)
     console.log('--------------------------')
   }
 }
 
 function chooseBidSessionWinner(bidList) {
-  if (bidObjects.length === clientsList.length - 1) {
+  if (bidObjects.length === machines.length) {
     return _.minBy(bidList, 'bidPrice')
   }
   return undefined
@@ -75,7 +76,8 @@ function payForTask(task) {
 }
 
 function getClientListAndEmit(socket) {
-  socket.emit('machines', fullInfoClients)
+  socket.emit('machines', machines)
+  socket.emit('transactions', transactions)
 }
 
 // event fired every time a new machine connects:
@@ -113,13 +115,14 @@ io.on('connection', (socket) => {
     io.emit('bid_session_result', JSON.stringify(winner))
   })
 
-  socket.on('finished_workpiece', (task) => {
-    const taskObj = JSON.parse(task)
-    console.log('Task done: ', taskObj)
+  socket.on('finished_workpiece', (doneTask) => {
+    const doneTaskObj = JSON.parse(doneTask)
+    transactions.push(doneTaskObj)
+    console.log('Task done: ', doneTaskObj)
     _.remove(bidObjects)
     console.log('------------------------')
 
-    payForTask(taskObj)
+    payForTask(doneTaskObj)
   })
 
   // =============================================================

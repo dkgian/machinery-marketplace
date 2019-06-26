@@ -6,4 +6,12 @@ exports.MachineInfo = {
   STATUS_AVAILABLE: 'available',
   STATUS_UNAVAILABLE: 'unavailable',
   STATUS_WORKING: 'working',
+
+  MACHINE_OPERATORS: [
+    'Barrel finishing',
+    'Case-harden',
+    'Belt grinding',
+    'Coating',
+    'Cleaning',
+  ],
 }

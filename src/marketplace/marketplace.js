@@ -50,7 +50,7 @@ function showClientsList() {
 
 function updateBidPriceList(bidObject) {
   bidObjects.push(bidObject)
-  if (bidObjects.length === fullInfoClients.length) {
+  if (bidObjects.length === fullInfoClients.length - 1) {
     console.log('Bidding list: ', bidObjects)
     console.log('--------------------------')
   }
@@ -75,7 +75,7 @@ function payForTask(task) {
 }
 
 function getClientListAndEmit(socket) {
-  socket.emit('client_list', fullInfoClients)
+  socket.emit('machines', fullInfoClients)
 }
 
 // event fired every time a new machine connects:

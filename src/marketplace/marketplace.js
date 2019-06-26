@@ -45,17 +45,13 @@ function addClientToList(id) {
   }
 }
 
-function showClientsList() {
-  console.log('Client list: ', clientsList)
-}
-
-function updateBidPriceList(bidObject) {
-  bidObjects.push(bidObject)
-  if (bidObjects.length === machines.length - 2) {
-    console.log('Bidding list: ', bidObjects)
-    console.log('--------------------------')
-  }
-}
+// function updateBidPriceList(bidObject) {
+//   bidObjects.push(bidObject)
+//   if (bidObjects.length === machines.length - 2) {
+//     console.log('Bidding list: ', bidObjects)
+//     console.log('--------------------------')
+//   }
+// }
 
 function chooseBidSessionWinner(bidList) {
   if (bidObjects.length === machines.length) {
@@ -85,7 +81,6 @@ io.on('connection', (socket) => {
   // =============================================================
   // add machine to list
   addClientToList(socket.id)
-  showClientsList()
   setInterval(() => getClientListAndEmit(socket), 1000)
 
   // remove machine from list
@@ -103,7 +98,7 @@ io.on('connection', (socket) => {
     const bidDataObject = JSON.parse(bidData)
 
     bidDataObject.machineId = socket.id
-    updateBidPriceList(bidDataObject)
+    bidObjects.push(bidDataObject)
 
     const winner = chooseBidSessionWinner(bidObjects)
     if (winner !== undefined) {

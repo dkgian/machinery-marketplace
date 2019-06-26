@@ -64,8 +64,6 @@ io.on('connect', () => {
     if (winnerObj !== null) {
       const amIWinner = (winnerObj.machineId === io.id)
 
-      console.log('BID SESSION RESULT: ', winnerObj)
-
       if (amIWinner) {
         processingTask()
         returnWorkpieceAndGetPaid(winnerObj)

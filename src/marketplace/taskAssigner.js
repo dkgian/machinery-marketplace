@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 const socket = require('socket.io-client')('http://localhost:8000')
 const uuid = require('uuid/v4')
+const MachineInfo = require('../constant/MachineInfo')
 
+const task = MachineInfo.MachineInfo.MACHINE_OPERATORS
 const taskList = {
   transactionId: uuid(),
   tasks: [
     {
       taskId: uuid(),
-      name: 'grinding',
+      name: task[Math.floor(Math.random() * (task.length - 1))],
       requirements: [
         {
           name: 'test 1',

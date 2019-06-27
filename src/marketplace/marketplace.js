@@ -10,6 +10,7 @@ const io = socketIO(server)
 const machines = []
 const clientsList = []
 const bidObjects = []
+const tasks = []
 const transactions = []
 
 function updateClientListInfo(profile, removeMachine = false) {
@@ -125,6 +126,7 @@ io.on('connection', (socket) => {
   socket.on('tasks', (message) => {
     const transaction = JSON.parse(message)
 
+    tasks.push(transaction)
     transaction.tasks.map((task) => {
       // console.log(task)
       const StringifiedTask = JSON.stringify(task)
@@ -140,4 +142,14 @@ io.on('connection', (socket) => {
     updateClientListInfo(machineProfile)
     // fullInfoClients.push(machineProfile)
   })
+})
+
+
+app.get('/tasks/:id?', (req, res) => {
+  const { id } = req.params
+  if (!id) {
+    res.json(tasks)
+  }
+  const taskById = _.find(tasks, { tasks: [{ taskId: id }] })
+  res.json(taskById)
 })

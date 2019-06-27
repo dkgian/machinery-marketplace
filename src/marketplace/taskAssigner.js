@@ -5,7 +5,6 @@ const MachineInfo = require('../constant/MachineInfo')
 
 const task = MachineInfo.MachineInfo.MACHINE_OPERATORS
 const taskList = {
-  transactionId: uuid(),
   tasks: [
     {
       taskId: uuid(),

@@ -2,6 +2,9 @@ const http = require('http')
 const app = require('express')()
 const socketIO = require('socket.io')
 const _ = require('lodash')
+const cors = require('cors')
+
+app.use(cors())
 
 const server = http.createServer(app)
 server.listen(8000)

@@ -1,5 +1,5 @@
 # machinery-marketplace
-m2m, marketplace, agents, bid, iota, competitive environment
+m2m, marketplace, agents, bid, iota, competitive environment, socket
 
 ### Usage
 Run marketplace server 
